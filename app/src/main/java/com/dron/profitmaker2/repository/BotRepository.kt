@@ -13,6 +13,10 @@ class BotRepository {
         bots.add(bot)
     }
 
+    fun deleteBot(botId: String) {
+        bots.removeIf { it.id == botId }
+    }
+
     fun countStrategyUsage(id: String): Int {
         return bots.count() { it.strategyId == id }
     }
@@ -21,6 +25,7 @@ class BotRepository {
         bots.addAll(
             listOf(
                 Bot(
+                    id = "0",
                     name = "Bot 1",
                     assets = listOf("BTC", "ETH"),
                     strategyId = "0",
@@ -28,6 +33,7 @@ class BotRepository {
                     profitHistory = listOf(50.0, 100.0, 150.0)
                 ),
                 Bot(
+                    id = "1",
                     name = "Bot 2",
                     assets = listOf("XRP", "ADA"),
                     strategyId = "0",
@@ -35,6 +41,7 @@ class BotRepository {
                     profitHistory = listOf(25.0, 50.0, 75.0)
                 ),
                 Bot(
+                    id = "2",
                     name = "Bot 3",
                     assets = listOf("SOL", "DOT"),
                     strategyId = "1",
@@ -42,6 +49,7 @@ class BotRepository {
                     profitHistory = listOf(100.0, 150.0, 200.0)
                 ),
                 Bot(
+                    id = "3",
                     name = "Bot 3",
                     assets = listOf("SOL", "DOT"),
                     strategyId = "1",
@@ -49,6 +57,7 @@ class BotRepository {
                     profitHistory = listOf(100.0, 150.0, 200.0)
                 ),
                 Bot(
+                    id = "4",
                     name = "Bot 3",
                     assets = listOf("SOL", "DOT"),
                     strategyId = "1",
@@ -56,6 +65,7 @@ class BotRepository {
                     profitHistory = listOf(100.0, 150.0, 200.0)
                 ),
                 Bot(
+                    id = "5",
                     name = "Bot 3",
                     assets = listOf("SOL", "DOT"),
                     strategyId = "1",

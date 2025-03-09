@@ -24,8 +24,8 @@ sealed class Routes(val route: String) {
     data object BotListScreen : Routes("botListScreen")
     data object CreateBotScreen : Routes("createBotScreen")
     data object BotDetails : Routes("botDetails")
-    data object StrategyList : Routes("strategyList")
     data object CreateStrategyScreen : Routes("createStrategyList")
+    data object EditStrategyScreen : Routes("editStrategyList")
     data object SelectAssetsScreen : Routes("selectAssetsScreen")
     data object SelectStrategyScreen : Routes("selectStrategyScreen")
 }

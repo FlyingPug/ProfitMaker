@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.dron.profitmaker2.Routes
 import com.dron.profitmaker2.repository.AssetRepository
 import com.dron.profitmaker2.repository.BotRepository
+import com.dron.profitmaker2.repository.StrategyRepository
 import com.dron.profitmaker2.ui.layout.BotAndStrategyListScreen
 import com.dron.profitmaker2.ui.layout.BotDetailsScreen
 import com.dron.profitmaker2.ui.layout.CreateBotScreen
@@ -16,6 +17,8 @@ import com.dron.profitmaker2.ui.layout.SelectAssetsScreen
 import com.dron.profitmaker2.ui.layout.SelectStrategyScreen
 import com.dron.profitmaker2.viewmodels.BotViewModel
 import com.dron.profitmaker2.viewmodels.BotViewModelFactory
+import com.dron.profitmaker2.viewmodels.StrategyViewModel
+import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun AppNavigation() {
@@ -26,20 +29,31 @@ fun AppNavigation() {
         composable(Routes.CreateBotScreen.route) { CreateBotScreen(navController) }
         composable(Routes.SelectAssetsScreen.route) { SelectAssetsScreen(navController) }
         composable(Routes.SelectStrategyScreen.route) {
-            val botViewModel: BotViewModel = viewModel(
-                factory = BotViewModelFactory(BotRepository(), AssetRepository())
-            )
             SelectStrategyScreen(
                 navController = navController,
-                onStrategySelected = { strategyId ->
-                    botViewModel.selectStrategy(strategyId)
-                    navController.popBackStack()
-                }
             )
         }
         composable(Routes.CreateStrategyScreen.route + "/{strategyType}") { backStackEntry ->
             val strategyType = backStackEntry.arguments?.getString("strategyType")
-            CreateStrategyScreen(strategyType, navController)
+            CreateStrategyScreen(
+                strategyId = null,
+                strategyType = strategyType,
+                navController = navController
+            )
+        }
+        composable(Routes.EditStrategyScreen.route + "/{strategyId}") { backStackEntry ->
+            val strategyId = backStackEntry.arguments?.getString("strategyId")
+            val strategyViewModel: StrategyViewModel = viewModel(
+                factory = StrategyViewModelFactory(StrategyRepository())
+            )
+            val strategy = strategyId?.let {
+                strategyViewModel.getStrategyById(it)
+            }
+            CreateStrategyScreen(
+                strategyId = strategyId,
+                strategyType = strategy?.type?.name,
+                navController = navController
+            )
         }
         composable(Routes.BotDetails.route + "/{botId}") { backStackEntry ->
             val botId = backStackEntry.arguments?.getString("botId")

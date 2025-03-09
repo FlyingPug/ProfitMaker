@@ -75,6 +75,13 @@ class BotViewModel constructor(
         return botRepository.countStrategyUsage(strategyId);
     }
 
+    fun deleteBot(botId: String) {
+        viewModelScope.launch {
+            botRepository.deleteBot(botId)
+            loadBots()
+        }
+    }
+
     fun createBot(name: String) {
         viewModelScope.launch {
             if (selectedAssets.value.isEmpty()) {

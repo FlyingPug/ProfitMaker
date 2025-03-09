@@ -65,18 +65,23 @@ class StrategyViewModel constructor(
         }
     }
 
-    fun updateStrategy() {
+    fun updateStrategy(
+        id: String,
+        name: String,
+        timeStep: TimeStep,
+        formula: String?
+    ) {
         viewModelScope.launch {
-            selectedStrategy?.let { strategy ->
-                val updatedStrategy = strategy.copy(
-                    name = strategyName,
-                    timeStep = selectedTimeStep,
-                    formula = if (strategy.type == StrategyType.MATH) formula else null
-                )
-                strategyRepository.updateStrategy(updatedStrategy)
-                loadStrategies()
-                resetState()
-            }
+            val updatedStrategy = Strategy(
+                id = id,
+                name = name,
+                type = selectedStrategy?.type ?: StrategyType.MATH,
+                timeStep = timeStep,
+                formula = formula
+            )
+            strategyRepository.updateStrategy(updatedStrategy)
+            loadStrategies()
+            resetState()
         }
     }
 

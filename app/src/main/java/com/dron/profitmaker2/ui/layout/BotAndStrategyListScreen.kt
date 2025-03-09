@@ -71,7 +71,7 @@ fun BotAndStrategyListScreen(
                     if (selectedTab == 0) {
                         navController.navigate(Routes.CreateBotScreen.route)
                     } else {
-                        navController.navigate(Routes.CreateStrategyScreen.route)
+                        navController.navigate(Routes.SelectStrategyScreen.route)
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -157,7 +157,7 @@ fun BotAndStrategyListScreen(
                                 items(filteredBots) { bot ->
                                     BotCard(
                                         bot = bot,
-                                        onClick = { navController.navigate("botDetails/${bot.id}") }
+                                        onClick = { navController.navigate(Routes.BotDetails.route + "/${bot.id}") }
                                     )
                                 }
                             }
@@ -182,7 +182,7 @@ fun BotAndStrategyListScreen(
                                 items(filteredStrategies) { strategy ->
                                     StrategyCard(
                                         strategy = strategy,
-                                        onClick = { navController.navigate("strategyDetails/${strategy.id}") }
+                                        onClick = { navController.navigate(Routes.EditStrategyScreen.route + "/${strategy.id}") }
                                     )
                                 }
                             }

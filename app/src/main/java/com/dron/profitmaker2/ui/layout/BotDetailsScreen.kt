@@ -2,6 +2,11 @@ package com.dron.profitmaker2.ui.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,14 +15,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.dron.profitmaker2.AppColors
+import com.dron.profitmaker2.Dimens
 import com.dron.profitmaker2.R
-import com.dron.profitmaker2.models.Bot
 import com.dron.profitmaker2.repository.AssetRepository
 import com.dron.profitmaker2.repository.BotRepository
+import com.dron.profitmaker2.ui.theme.DarkRed
 import com.dron.profitmaker2.viewmodels.BotViewModel
 import com.dron.profitmaker2.viewmodels.BotViewModelFactory
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BotDetailsScreen(
     botId: String?,
@@ -31,42 +39,54 @@ fun BotDetailsScreen(
         ?.let { remember { mutableStateOf(it) } }
         ?: run {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Bot not found")
+                Text(stringResource(R.string.not_found))
             }
             return
         }
 
-    val profitData by viewModel.calculateProfitData(bot)
+    val profitData = viewModel.calculateProfitData(bot)
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = bot.name,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Text(
-            text = stringResource(id = R.string.selected_assets),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        bot.assets.forEach { asset ->
-            Text(
-                text = "- $asset",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 16.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(bot.name)
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "back")
+                    }
+                }
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    viewModel.deleteBot(bot.id)
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.DefaultPadding),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DarkRed
+                )
+            ) {
+                Text(stringResource(id = R.string.delete), color = MaterialTheme.colorScheme.onPrimary)
+            }
         }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            ProfitChart(data = bot.profitHistory)
 
-        Text(
-            text = "Strategy: ${bot.strategyId}",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
-
-        ProfitChart(data = bot.profitHistory)
-
-        GridLayout(profitData = profitData)
+            GridLayout(profitData)
+        }
     }
 }
 
@@ -75,39 +95,31 @@ fun ProfitChart(data: List<Double>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Profit Chart Placeholder")
+            .height(400.dp)
+            .background( MaterialTheme.colorScheme.surface),
+        contentAlignment = Alignment.Center    ) {
+        // graphic moc
+
+        Text("Profit Chart (Placeholder)", style = MaterialTheme.typography.bodyMedium)
     }
 }
-
 @Composable
 fun GridLayout(profitData: Map<String, Double>) {
-    Column(modifier = Modifier.padding(top = 16.dp)) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ProfitCard(
-                title = stringResource(id = R.string.profit_since_creation),
-                profit = profitData["sinceCreation"] ?: 0.0
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            ProfitCard(
-                title = stringResource(id = R.string.profit_in_last_7_days),
-                profit = profitData["last7Days"] ?: 0.0
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ProfitCard(
-                title = stringResource(id = R.string.profit_in_last_30_days),
-                profit = profitData["last30Days"] ?: 0.0
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            ProfitCard(
-                title = stringResource(id = R.string.profit_in_last_year),
-                profit = profitData["lastYear"] ?: 0.0
-            )
+    val items = listOf(
+        Pair(stringResource(id = R.string.profit_since_creation), profitData["sinceCreation"] ?: 0.0),
+        Pair(stringResource(id = R.string.profit_in_last_7_days), profitData["last7Days"] ?: 0.0),
+        Pair(stringResource(id = R.string.profit_in_last_30_days), profitData["last30Days"] ?: 0.0),
+        Pair(stringResource(id = R.string.profit_in_last_year), profitData["lastYear"] ?: 0.0)
+    )
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(Dimens.DefaultPadding),
+        verticalArrangement = Arrangement.spacedBy(Dimens.DefaultPadding),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.DefaultPadding)
+    ) {
+        items(items) { (title, profit) ->
+            ProfitCard(title = title, profit = profit)
         }
     }
 }
@@ -116,23 +128,30 @@ fun GridLayout(profitData: Map<String, Double>) {
 fun ProfitCard(title: String, profit: Double) {
     Card(
         modifier = Modifier
-            .padding(8.dp),
-        shape = MaterialTheme.shapes.medium
+            .fillMaxWidth()
+            .height(120.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(Dimens.DefaultPadding),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "$${"%.2f".format(profit)}",
-                style = MaterialTheme.typography.bodyMedium
+                text ="$${"%.2f".format(profit)}",
+                style = MaterialTheme.typography.labelMedium,
+                color = if (profit >= 0) AppColors.ProfitColor else AppColors.LossColor,
+                modifier = Modifier.padding(start = Dimens.DefaultPadding)
             )
         }
     }
