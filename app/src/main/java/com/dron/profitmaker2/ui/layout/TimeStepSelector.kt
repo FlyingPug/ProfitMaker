@@ -9,9 +9,10 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.dron.profitmaker2.R
 import com.dron.profitmaker2.models.TimeStep
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeStepSelector(
     selected: TimeStep,
@@ -19,7 +20,7 @@ fun TimeStepSelector(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val timeSteps = TimeStep.values()
+    val timeSteps = TimeStep.entries.toTypedArray()
 
     Box(modifier = modifier) {
         Box(
@@ -28,10 +29,10 @@ fun TimeStepSelector(
                 .clickable { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = selected.name,
+                value = selected.displayName,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Time Step", color = MaterialTheme.colorScheme.onPrimary) },
+                label = { Text(stringResource(R.string.time_step), color = MaterialTheme.colorScheme.onPrimary) },
                 trailingIcon = {
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.ArrowDropDown,
@@ -45,7 +46,8 @@ fun TimeStepSelector(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -62,7 +64,7 @@ fun TimeStepSelector(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = timeStep.name,
+                            text = timeStep.displayName,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     },

@@ -2,16 +2,20 @@ package com.dron.profitmaker2.ui.layout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.dron.profitmaker2.Dimens
+import com.dron.profitmaker2.R
+import com.dron.profitmaker2.Routes
 import com.dron.profitmaker2.models.FormulaValidator
 import com.dron.profitmaker2.models.StrategyType
 import com.dron.profitmaker2.models.TimeStep
+import com.dron.profitmaker2.repository.BotRepository
 import com.dron.profitmaker2.repository.StrategyRepository
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
 import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
@@ -20,10 +24,10 @@ import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 @Composable
 fun CreateStrategyScreen(
     strategyId: String?,
-    strategyType: String?,
+    strategyType: String,
     navController: NavController,
     viewModel: StrategyViewModel = viewModel(
-        factory = StrategyViewModelFactory(StrategyRepository())
+        factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
     )
 ) {
     var strategyName by remember { mutableStateOf("") }
@@ -55,7 +59,7 @@ fun CreateStrategyScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.Default.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "back",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
@@ -72,7 +76,7 @@ fun CreateStrategyScreen(
                     if (strategyId == null) {
                         viewModel.createStrategy(
                             name = strategyName,
-                            type = StrategyType.valueOf(strategyType ?: StrategyType.MATH.name),
+                            type = StrategyType.valueOf(strategyType),
                             timeStep = selectedTimeStep,
                             formula = if (isMathStrategy) formula else null
                         )
@@ -84,15 +88,15 @@ fun CreateStrategyScreen(
                             formula = if (isMathStrategy) formula else null
                         )
                     }
-                    navController.popBackStack()
+                    navController.navigate(Routes.BotListScreen.route)
                 },
                 enabled = strategyName.length in 3..100 &&
                         (!isMathStrategy || FormulaValidator.validate(formula).isValid),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(Dimens.DefaultPadding)
             ) {
-                Text("Continue")
+                Text(stringResource(R.string._continue))
             }
         }
     ) { padding ->
@@ -108,7 +112,7 @@ fun CreateStrategyScreen(
                 isError = strategyName.length !in 3..100,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(Dimens.DefaultPadding),
                 colors = TextFieldDefaults.colors(
                     focusedTextColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
@@ -124,7 +128,7 @@ fun CreateStrategyScreen(
                 onSelect = { selectedTimeStep = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(Dimens.DefaultPadding)
             )
 
             if (isMathStrategy) {
@@ -135,7 +139,7 @@ fun CreateStrategyScreen(
                     isError = formula.length > 100 || !FormulaValidator.validate(formula).isValid,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(Dimens.DefaultPadding),
                     colors = TextFieldDefaults.colors(
                         focusedTextColor = MaterialTheme.colorScheme.onPrimary,
                         unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,

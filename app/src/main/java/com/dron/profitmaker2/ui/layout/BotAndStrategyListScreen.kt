@@ -39,7 +39,8 @@ fun BotAndStrategyListScreen(
     navController: NavController,
     botViewModel: BotViewModel = viewModel(factory = BotViewModelFactory(BotRepository(), AssetRepository())),
     strategyViewModel: StrategyViewModel = viewModel(factory = StrategyViewModelFactory(
-        StrategyRepository()
+        StrategyRepository(),
+        BotRepository()
     ))
 ) {
     val bots by botViewModel.bots.collectAsState()

@@ -14,15 +14,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Main()
+            ProfitMaker2Theme {
+                AppNavigation(viewModelStoreOwner = this)
+            }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun Main() {
-    ProfitMaker2Theme {
-        AppNavigation()
     }
 }

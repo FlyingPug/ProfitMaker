@@ -14,6 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.dron.profitmaker2.Routes
+import com.dron.profitmaker2.models.StrategyType
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,11 +38,11 @@ fun SelectStrategyScreen(
                 .padding(padding)
         ) {
             LazyColumn {
-                items(StrategyType.entries.toTypedArray()) { strategyType ->
+                items(StrategyTypeInfo.entries.toTypedArray()) { strategyType ->
                     StrategyTypeCard(
                         strategyType = strategyType,
                         onClick = {
-                            navController.navigate(Routes.CreateStrategyScreen.route + "/${strategyType.name}")
+                            navController.navigate(Routes.CreateStrategyScreen.route + "/${strategyType.strategyType.name}")
                         }
                     )
                 }
@@ -52,7 +53,7 @@ fun SelectStrategyScreen(
 
 @Composable
 fun StrategyTypeCard(
-    strategyType: StrategyType,
+    strategyType: StrategyTypeInfo,
     onClick: () -> Unit
 ) {
     Card(
@@ -97,19 +98,22 @@ fun StrategyTypeCard(
     }
 }
 
-enum class StrategyType(
+enum class StrategyTypeInfo(
     val iconResId: Int,
     val titleResId: Int,
-    val descriptionResId: Int
+    val descriptionResId: Int,
+    val strategyType: StrategyType
 ) {
     MATH(
         iconResId = R.drawable.math,
         titleResId = R.string.math_strategy,
-        descriptionResId = R.string.math_strategy_description
+        descriptionResId = R.string.math_strategy_description,
+        strategyType = StrategyType.MATH
     ),
     RANDOM(
         iconResId = R.drawable.random,
         titleResId = R.string.fish_strategy,
-        descriptionResId = R.string.fish_strategy_description
+        descriptionResId = R.string.fish_strategy_description,
+        strategyType = StrategyType.FISH
     )
 }

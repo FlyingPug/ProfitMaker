@@ -19,6 +19,7 @@
     <string name="name">Name</string>
     <string name="math_function">Math Function</string>
     <string name="time">Time</string>
+    <string name="time_step">Time Step</string>
     <string name="strategy">Strategy</string>
     <string name="actives">Actives</string>
     <string name="delete">Delete</string>

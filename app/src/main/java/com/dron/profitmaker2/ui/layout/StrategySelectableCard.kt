@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,14 +35,16 @@ import com.dron.profitmaker2.viewmodels.StrategyViewModel
 import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
-fun StrategyCard(
+fun SelectableStrategyCard(
     strategy: Strategy,
+    isSelected: Boolean,
     onClick: () -> Unit,
     strategyViewModel: StrategyViewModel = viewModel(
         factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
     )
 ) {
     val usageCount by strategyViewModel.strategyUsageCount.collectAsState()
+    val count = usageCount[strategy.id] ?: 0
 
     Card(
         onClick = onClick,
@@ -50,8 +54,16 @@ fun StrategyCard(
             .padding(Dimens.DefaultPadding),
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.background
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
+            contentColor = if (isSelected) {
+                MaterialTheme.colorScheme.background
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
         )
     ) {
         Row(
@@ -79,9 +91,18 @@ fun StrategyCard(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "Used in ${usageCount[strategy.id]} bots",
+                    text = "Used in $count bots",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
+                )
+            }
+
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
                 )
             }
         }

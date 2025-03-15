@@ -3,12 +3,15 @@ package com.dron.profitmaker2.viewmodels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dron.profitmaker2.R
 import com.dron.profitmaker2.models.Strategy
 import com.dron.profitmaker2.models.TimeStep
 import com.dron.profitmaker2.models.StrategyType
+import com.dron.profitmaker2.repository.BotRepository
 
 import com.dron.profitmaker2.repository.StrategyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,28 +19,35 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class StrategyViewModel constructor(
-    private val strategyRepository: StrategyRepository
+class StrategyViewModel(
+    private val strategyRepository: StrategyRepository,
+    private val botRepository: BotRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val _strategies = MutableStateFlow<List<Strategy>>(emptyList())
     val strategies: StateFlow<List<Strategy>> = _strategies.asStateFlow()
 
-    var strategyName by mutableStateOf("")
+    private val _strategyUsageCount = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val strategyUsageCount: StateFlow<Map<String, Int>> = _strategyUsageCount.asStateFlow()
+
+    var strategyName by mutableStateOf(savedStateHandle.get<String>("strategyName") ?: "")
         private set
 
-    var selectedTimeStep by mutableStateOf(TimeStep.HOUR_1)
+    var selectedTimeStep by mutableStateOf(
+        savedStateHandle.get<TimeStep>("selectedTimeStep") ?: TimeStep.HOUR_1
+    )
         private set
 
-    var formula by mutableStateOf("")
+    var formula by mutableStateOf(savedStateHandle.get<String>("formula") ?: "")
         private set
 
     var selectedStrategy by mutableStateOf<Strategy?>(null)
         private set
 
     init {
-        // mock data
-        strategyRepository.initializeMockData()
         loadStrategies()
+        loadStrategyUsageCount()
     }
 
     private fun loadStrategies() {
@@ -46,12 +56,7 @@ class StrategyViewModel constructor(
         }
     }
 
-    fun createStrategy(
-        name: String,
-        type: StrategyType,
-        timeStep: TimeStep,
-        formula: String?
-    ) {
+    fun createStrategy(name: String, type: StrategyType, timeStep: TimeStep, formula: String?) {
         viewModelScope.launch {
             val newStrategy = Strategy(
                 id = System.currentTimeMillis().toString(),
@@ -65,12 +70,7 @@ class StrategyViewModel constructor(
         }
     }
 
-    fun updateStrategy(
-        id: String,
-        name: String,
-        timeStep: TimeStep,
-        formula: String?
-    ) {
+    fun updateStrategy(id: String, name: String, timeStep: TimeStep, formula: String?) {
         viewModelScope.launch {
             val updatedStrategy = Strategy(
                 id = id,
@@ -85,11 +85,17 @@ class StrategyViewModel constructor(
         }
     }
 
-    fun deleteStrategy(strategyId: String) {
+    fun loadStrategyUsageCount() {
         viewModelScope.launch {
-            strategyRepository.deleteStrategy(strategyId)
-            loadStrategies()
+            val counts = botRepository.getAllBots()
+                .groupingBy { it.strategyId }
+                .eachCount()
+            _strategyUsageCount.value = counts
         }
+    }
+
+    fun getStrategyById(id: String): Strategy? {
+        return _strategies.value.find { it.id == id }
     }
 
     fun getStrategyIcon(strategyType: StrategyType): Int {
@@ -104,10 +110,9 @@ class StrategyViewModel constructor(
         strategyName = strategy.name
         selectedTimeStep = strategy.timeStep
         formula = strategy.formula ?: ""
-    }
-
-    fun getStrategyById(id: String): Strategy? {
-        return strategyRepository.getStrategyById(id)
+        savedStateHandle["strategyName"] = strategy.name
+        savedStateHandle["selectedTimeStep"] = strategy.timeStep
+        savedStateHandle["formula"] = strategy.formula ?: ""
     }
 
     fun resetState() {
@@ -115,6 +120,9 @@ class StrategyViewModel constructor(
         strategyName = ""
         selectedTimeStep = TimeStep.HOUR_1
         formula = ""
+        savedStateHandle["strategyName"] = ""
+        savedStateHandle["selectedTimeStep"] = TimeStep.HOUR_1
+        savedStateHandle["formula"] = ""
     }
 
     fun isFormulaValid(): Boolean {
