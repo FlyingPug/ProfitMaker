@@ -1,13 +1,15 @@
 package com.dron.profitmaker2.models
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.time.LocalDate
-import java.util.UUID
 
+@Entity(tableName = "bots")
 data class Bot(
-    val id: String  = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String,
     val name: String,
     val assets: List<String>,
     val strategyId: String,
+    val profitUSD: Double,
     val creationDate: LocalDate = LocalDate.now(),
-    val profitUSD: Double = 0.00,
-    val profitHistory: List<Double> = emptyList()
+    val profitHistory: List<Double>
 )

@@ -1,11 +1,13 @@
 package com.dron.profitmaker2.models
 
-import java.util.UUID
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "strategies")
 data class Strategy(
-    val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey val id: String,
     val name: String,
     val type: StrategyType,
     val timeStep: TimeStep,
-    val formula: String? = null,
+    val formula: String?
 )

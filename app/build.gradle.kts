@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
+// я не знаю почему оно не билдилось, и не знаю почему оно стало билдиться....
 
 android {
     namespace = "com.dron.profitmaker2"
@@ -14,7 +17,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,6 +43,8 @@ android {
     packagingOptions {
         resources {
             excludes += "META-INF/LICENSE-notice.md"
+            excludes += "META-INF/gradle/incremental.annotation.processors"
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
             merges += "META-INF/LICENSE.md"
             merges += "META-INF/NOTICE.md"
         }
@@ -48,7 +52,18 @@ android {
 }
 
 dependencies {
+    implementation("com.google.dagger:dagger-compiler:2.51.1")
+    ksp("com.google.dagger:dagger-compiler:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.55")
+    ksp("com.google.dagger:hilt-android-compiler:2.55")
 
+    implementation(libs.jetbrains.kotlinx.metadata.jvm)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.androidx.room.gradle.plugin)
+    implementation(libs.google.dagger.compiler)
+    ksp(libs.google.dagger.compiler)
+    implementation(libs.androidx.hilt.hilt.navigation.compose)
+    implementation(libs.gson)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,13 +75,17 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.databinding.compiler)
-    implementation(libs.screenshot.validation.junit.engine)
     implementation(libs.androidx.compose.testing)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.room.compiler)
+
+    implementation(libs.room.runtime)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

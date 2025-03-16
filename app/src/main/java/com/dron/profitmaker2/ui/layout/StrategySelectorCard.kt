@@ -13,19 +13,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.dron.profitmaker2.repository.BotRepository
-import com.dron.profitmaker2.repository.StrategyRepository
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun StrategySelectorCard(
     selectedStrategyId: String?,
     onClick: () -> Unit,
-    strategyViewModel: StrategyViewModel = viewModel(
-        factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
-    )
+    strategyViewModel: StrategyViewModel = hiltViewModel()
 ) {
     val strategies by strategyViewModel.strategies.collectAsState()
     val selectedStrategy = strategies.find { it.id == selectedStrategyId }

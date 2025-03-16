@@ -23,24 +23,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dron.profitmaker2.AppColors
 import com.dron.profitmaker2.AppStrings
 import com.dron.profitmaker2.Dimens
 import com.dron.profitmaker2.R
 import com.dron.profitmaker2.models.Bot
-import com.dron.profitmaker2.repository.BotRepository
-import com.dron.profitmaker2.repository.StrategyRepository
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun BotCard(
     bot: Bot,
     onClick: () -> Unit,
-    strategyViewModel: StrategyViewModel = viewModel(
-        factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
-    )
+    strategyViewModel: StrategyViewModel = hiltViewModel()
     ) {
     val strategy = strategyViewModel.getStrategyById(bot.strategyId)
 

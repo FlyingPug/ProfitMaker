@@ -18,30 +18,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.dron.profitmaker2.R
 import com.dron.profitmaker2.Routes
-import com.dron.profitmaker2.repository.AssetRepository
-import com.dron.profitmaker2.repository.BotRepository
 import com.dron.profitmaker2.viewmodels.BotViewModel
-import com.dron.profitmaker2.viewmodels.BotViewModelFactory
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import com.dron.profitmaker2.repository.StrategyRepository
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun BotAndStrategyListScreen(
     navController: NavController,
-    botViewModel: BotViewModel = viewModel(factory = BotViewModelFactory(BotRepository(), AssetRepository())),
-    strategyViewModel: StrategyViewModel = viewModel(factory = StrategyViewModelFactory(
-        StrategyRepository(),
-        BotRepository()
-    ))
+    botViewModel: BotViewModel,
+    strategyViewModel: StrategyViewModel
 ) {
     val bots by botViewModel.bots.collectAsState()
     val strategies by strategyViewModel.strategies.collectAsState()
@@ -218,10 +210,4 @@ fun SearchBar(
         ),
         singleLine = true
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewBotAndStrategyListScreen() {
-    BotAndStrategyListScreen(navController = rememberNavController())
 }

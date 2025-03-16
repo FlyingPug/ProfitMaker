@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dron.profitmaker2.Dimens
 import com.dron.profitmaker2.R
@@ -32,16 +33,13 @@ import com.dron.profitmaker2.models.Strategy
 import com.dron.profitmaker2.repository.BotRepository
 import com.dron.profitmaker2.repository.StrategyRepository
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun SelectableStrategyCard(
     strategy: Strategy,
     isSelected: Boolean,
     onClick: () -> Unit,
-    strategyViewModel: StrategyViewModel = viewModel(
-        factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
-    )
+    strategyViewModel: StrategyViewModel = hiltViewModel()
 ) {
     val usageCount by strategyViewModel.strategyUsageCount.collectAsState()
     val count = usageCount[strategy.id] ?: 0

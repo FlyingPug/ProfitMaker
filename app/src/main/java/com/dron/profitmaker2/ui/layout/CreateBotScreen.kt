@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -14,17 +15,12 @@ import com.dron.profitmaker2.Routes
 import com.dron.profitmaker2.repository.AssetRepository
 import com.dron.profitmaker2.repository.BotRepository
 import com.dron.profitmaker2.viewmodels.BotViewModel
-import com.dron.profitmaker2.viewmodels.BotViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateBotScreen(
     navController: NavController,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    viewModel: BotViewModel = viewModel(
-        viewModelStoreOwner,
-        factory = BotViewModelFactory(BotRepository(), AssetRepository())
-    )
+    viewModel: BotViewModel
 ) {
     var botName by remember { mutableStateOf("") }
     val selectedAssets by viewModel.selectedAssets.collectAsState()

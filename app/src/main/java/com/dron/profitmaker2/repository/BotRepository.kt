@@ -1,80 +1,22 @@
 package com.dron.profitmaker2.repository
 
+import com.dron.profitmaker2.dao.BotDao
 import com.dron.profitmaker2.models.Bot
-import com.dron.profitmaker2.models.Strategy
 
-// mock repository
-class BotRepository {
-    companion object {
-        private val bots = mutableListOf<Bot>()
+class BotRepository(private val botDao: BotDao) {
 
-        init {
-            bots.addAll(
-                listOf(
-                    Bot(
-                        id = "0",
-                        name = "Bot 1",
-                        assets = listOf("BTC", "ETH"),
-                        strategyId = "0",
-                        profitUSD = -150.0,
-                        profitHistory = listOf(50.0, 100.0, 150.0)
-                    ),
-                    Bot(
-                        id = "1",
-                        name = "Bot 2",
-                        assets = listOf("XRP", "ADA"),
-                        strategyId = "0",
-                        profitUSD = -75.0,
-                        profitHistory = listOf(25.0, 50.0, 75.0)
-                    ),
-                    Bot(
-                        id = "2",
-                        name = "Bot 3",
-                        assets = listOf("SOL", "DOT"),
-                        strategyId = "1",
-                        profitUSD = 200.0,
-                        profitHistory = listOf(100.0, 150.0, 200.0)
-                    ),
-                    Bot(
-                        id = "3",
-                        name = "Bot 3",
-                        assets = listOf("SOL", "DOT"),
-                        strategyId = "1",
-                        profitUSD = 200.0,
-                        profitHistory = listOf(100.0, 150.0, 200.0)
-                    ),
-                    Bot(
-                        id = "4",
-                        name = "Bot 3",
-                        assets = listOf("SOL", "DOT"),
-                        strategyId = "1",
-                        profitUSD = 200.0,
-                        profitHistory = listOf(100.0, 150.0, 200.0)
-                    ),
-                    Bot(
-                        id = "5",
-                        name = "Bot 3",
-                        assets = listOf("SOL", "DOT"),
-                        strategyId = "1",
-                        profitUSD = 200.0,
-                        profitHistory = listOf(100.0, 150.0, 200.0)
-                    )
-                )
-            )
-        }
+    suspend  fun getAllBots(): List<Bot> = botDao.getAllBots()
+
+    suspend fun createBot(bot: Bot) {
+        botDao.insertBot(bot)
     }
 
-    fun getAllBots(): List<Bot> = bots
-
-    fun createBot(bot: Bot) {
-        bots.add(bot)
+    suspend fun deleteBot(botId: String) {
+        botDao.deleteBot(botId)
     }
 
-    fun deleteBot(botId: String) {
-        bots.removeIf { it.id == botId }
-    }
-
-    fun countStrategyUsage(id: String): Int {
-        return bots.count { it.strategyId == id }
+    suspend fun countStrategyUsage(strategyId: String): Int {
+        return botDao.countStrategyUsage(strategyId)
     }
 }
+

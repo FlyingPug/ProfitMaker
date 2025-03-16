@@ -3,35 +3,20 @@ package com.dron.profitmaker2.ui.layout
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
 import com.dron.profitmaker2.viewmodels.BotViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dron.profitmaker2.Dimens
 import com.dron.profitmaker2.R
-import com.dron.profitmaker2.models.FormulaValidator
-import com.dron.profitmaker2.models.StrategyType
-import com.dron.profitmaker2.repository.AssetRepository
-import com.dron.profitmaker2.repository.BotRepository
-import com.dron.profitmaker2.viewmodels.BotViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAssetsScreen(
     navController: NavController,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    viewModel: BotViewModel = viewModel(
-        viewModelStoreOwner,
-        factory = BotViewModelFactory(BotRepository(), AssetRepository())
-    )
+    viewModel: BotViewModel,
 ) {
     val selectedAssets by viewModel.selectedAssets.collectAsState()
     val assets by viewModel.assets.collectAsState()

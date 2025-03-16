@@ -1,6 +1,7 @@
 package com.dron.profitmaker2.ui
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -16,19 +17,21 @@ import com.dron.profitmaker2.ui.layout.CreateStrategyScreen
 import com.dron.profitmaker2.ui.layout.SelectAssetsScreen
 import com.dron.profitmaker2.ui.layout.SelectStrategiesScreen
 import com.dron.profitmaker2.ui.layout.SelectStrategyScreen
+import com.dron.profitmaker2.viewmodels.BotViewModel
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @Composable
 fun AppNavigation(viewModelStoreOwner: ViewModelStoreOwner) {
     val navController = rememberNavController()
+    val botViewModel: BotViewModel = hiltViewModel()
+    val strategyViewModel: StrategyViewModel = hiltViewModel()
 
     NavHost(navController, startDestination = Routes.BotListScreen.route) {
-        composable(Routes.BotListScreen.route) { BotAndStrategyListScreen(navController) }
-        composable(Routes.CreateBotScreen.route) { CreateBotScreen(navController, viewModelStoreOwner) }
-        composable(Routes.SelectAssetsScreen.route) { SelectAssetsScreen(navController, viewModelStoreOwner) }
+        composable(Routes.BotListScreen.route) { BotAndStrategyListScreen(navController, botViewModel, strategyViewModel) }
+        composable(Routes.CreateBotScreen.route) { CreateBotScreen(navController, botViewModel) }
+        composable(Routes.SelectAssetsScreen.route) { SelectAssetsScreen(navController, botViewModel) }
         composable(Routes.SelectStrategyScreen.route) { SelectStrategyScreen(navController = navController) }
-        composable(Routes.SelectStrategiesScreen.route) { SelectStrategiesScreen(navController = navController, viewModelStoreOwner) }
+        composable(Routes.SelectStrategiesScreen.route) { SelectStrategiesScreen(navController = navController, botViewModel, strategyViewModel) }
         composable(Routes.CreateStrategyScreen.route + "/{strategyType}") { backStackEntry ->
             val strategyType = backStackEntry.arguments?.getString("strategyType")
             if (strategyType != null) {
@@ -41,9 +44,7 @@ fun AppNavigation(viewModelStoreOwner: ViewModelStoreOwner) {
         }
         composable(Routes.EditStrategyScreen.route + "/{strategyId}") { backStackEntry ->
             val strategyId = backStackEntry.arguments?.getString("strategyId")
-            val strategyViewModel: StrategyViewModel = viewModel(
-                factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
-            )
+            val strategyViewModel: StrategyViewModel = hiltViewModel()
             val strategy = strategyId?.let {
                 strategyViewModel.getStrategyById(it)
             }

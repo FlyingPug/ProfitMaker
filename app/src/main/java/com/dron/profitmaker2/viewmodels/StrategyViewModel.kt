@@ -14,17 +14,19 @@ import com.dron.profitmaker2.models.StrategyType
 import com.dron.profitmaker2.repository.BotRepository
 
 import com.dron.profitmaker2.repository.StrategyRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StrategyViewModel(
+@HiltViewModel
+class StrategyViewModel @Inject constructor(
     private val strategyRepository: StrategyRepository,
     private val botRepository: BotRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val _strategies = MutableStateFlow<List<Strategy>>(emptyList())
     val strategies: StateFlow<List<Strategy>> = _strategies.asStateFlow()
 

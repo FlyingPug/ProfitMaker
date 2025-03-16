@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.dron.profitmaker2.Dimens
@@ -18,7 +19,6 @@ import com.dron.profitmaker2.models.TimeStep
 import com.dron.profitmaker2.repository.BotRepository
 import com.dron.profitmaker2.repository.StrategyRepository
 import com.dron.profitmaker2.viewmodels.StrategyViewModel
-import com.dron.profitmaker2.viewmodels.StrategyViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,9 +26,7 @@ fun CreateStrategyScreen(
     strategyId: String?,
     strategyType: String,
     navController: NavController,
-    viewModel: StrategyViewModel = viewModel(
-        factory = StrategyViewModelFactory(StrategyRepository(), BotRepository())
-    )
+    strategyViewModel: StrategyViewModel = hiltViewModel()
 ) {
     var strategyName by remember { mutableStateOf("") }
     var formula by remember { mutableStateOf("") }
@@ -38,7 +36,7 @@ fun CreateStrategyScreen(
 
     LaunchedEffect(strategyId) {
         strategyId?.let { id ->
-            val strategy = viewModel.getStrategyById(id)
+            val strategy = strategyViewModel.getStrategyById(id)
             strategy?.let {
                 strategyName = it.name
                 selectedTimeStep = it.timeStep
@@ -74,14 +72,14 @@ fun CreateStrategyScreen(
             Button(
                 onClick = {
                     if (strategyId == null) {
-                        viewModel.createStrategy(
+                        strategyViewModel.createStrategy(
                             name = strategyName,
                             type = StrategyType.valueOf(strategyType),
                             timeStep = selectedTimeStep,
                             formula = if (isMathStrategy) formula else null
                         )
                     } else {
-                        viewModel.updateStrategy(
+                        strategyViewModel.updateStrategy(
                             id = strategyId,
                             name = strategyName,
                             timeStep = selectedTimeStep,

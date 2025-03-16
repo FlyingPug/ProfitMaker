@@ -7,17 +7,20 @@ import com.dron.profitmaker2.models.Asset
 import com.dron.profitmaker2.models.Bot
 import com.dron.profitmaker2.repository.AssetRepository
 import com.dron.profitmaker2.repository.BotRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import javax.inject.Inject
 
-class BotViewModel(
+@HiltViewModel
+class BotViewModel @Inject constructor(
     private val botRepository: BotRepository,
     private val assetRepository: AssetRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val _bots = MutableStateFlow<List<Bot>>(emptyList())
     val bots: StateFlow<List<Bot>> = _bots.asStateFlow()
 
@@ -82,7 +85,10 @@ class BotViewModel(
                 id = System.currentTimeMillis().toString(),
                 name = name,
                 assets = selectedAssets.value,
-                strategyId = selectedStrategyId.value!!
+                strategyId = selectedStrategyId.value!!,
+                profitUSD = 0.00,
+                creationDate = LocalDate.now(),
+                profitHistory = emptyList()
             )
             botRepository.createBot(newBot)
             loadBots()
