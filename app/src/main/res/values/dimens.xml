@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_corner_radius">15dp</dimen>
+    <dimen name="search_corner_radius">15dp</dimen>
+    <dimen name="circle_radius">150dp</dimen>
+
+    <dimen name="bot_card_height">135dp</dimen>
+    <dimen name="small_card_height">75dp</dimen>
+    <dimen name="default_card_width">320dp</dimen>
+
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_top">40dp</dimen>
+
+    <dimen name="icon_size">40dp</dimen>
+    <dimen name="fab_size">80dp</dimen>
+</resources>
